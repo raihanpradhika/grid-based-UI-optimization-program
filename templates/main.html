@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/datatables/datatables.min.css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/select2/css/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="https://primasis.net/BengkelNet_Insurance/assets/global/plugins/select2/css/select2-bootstrap.min.css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css">
+	<link href="https://primasis.net/BengkelNet_Insurance/assets/layouts/layout/css/custom.css" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="https://primasis.net/BengkelNet_Insurance/assets/img//BENGKELNET.ico">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='pages/home.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='pages/predeployed.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='pages/predeployed_view.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='pages/deployed.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='pages/deployed_view.js') }}"></script>
+
+	<style>
+		.card-body {
+			top: 0;
+			left: auto;
+			max-width: 250px;
+			margin-top: -1px;
+			border: 1px solid;
+		}
+		#element{
+			display: inline-block;
+			width: fit-content;
+			height: fit-content;
+		}
+	</style>
+</head>
+<body>
+	
+<div id="element"></div> <!-- elements -->	
+<div id="test"></div>
+<div id="placementDiv"></div> <!-- placement area -->
+
+<script>
+
+	$(document).ready(function(){
+		divCoordInput();
+		mainElemCoordInput();
+		/* for(let i = 0; i < mainElement.length; i++){
+			document.getElementById("element").insertAdjacentText("afterend", mainElement[i]);			
+		} */
+		createPlacement();
+		//displayCoord();
+		
+		//ini untuk menampilkan elemen/widget pada browser:
+		//document.getElementById("element").innerHTML = home.filters.designList[0].divText + home.menus.designList[0].divText;
+		
+		$.ajax({
+            type: 'POST',
+            url: '/',
+            data: JSON.stringify(pages),
+            contentType: "application/json;charset=UTF-8",
+            success : function(resultData){
+				//alert(JSON.stringify(resultData));
+                console.log(resultData);
+				displayCoord(resultData);
+            },
+            error: function(error) {
+                alert(error);
+            }
+        });
+	});
+	
+	let screenWidth = window.innerWidth;
+	let screenHeight = window.innerHeight;
+    //alert("screenSize: " + screenWidth + ", " + screenHeight);
+
+	//let elements = {filters, menus};
+	let pages = [{home, predeployed, predeployed_view}];
+	//let page1 = [{filters, menus}];
+	let mainElement = [];
+	//let center1 = [];
+
+	function divCoordInput(){
+		for(let i = 0; i < pages.length; i++){
+			let pageContent = pages[i];
+			for(let j in pageContent){
+				let elements = pageContent[j];
+				for(let elemList in elements){
+					for(let k in elements[elemList].designList){
+						if(k == 0){
+							let elemData = elements[elemList].designList[k];
+							mainElement.push(elemData.divText);
+						}
+						else{
+							let elemData = elements[elemList].designList[k];
+							document.getElementById("element").innerHTML = elemData.divText;
+							let center = [document.getElementById("element").clientWidth/2, document.getElementById("element").clientHeight/2];
+							
+							elemData.divCoord.push(center);
+							let initChildCoord = {};
+							$('*', '#element').each(function() { 
+								if($(this).attr('data-getcoord') != undefined){
+									//alert($(this).attr('id') + ': ' + $(this).width());
+									let pos = $(this).offset();
+									let coordObj = {
+										'center' : [$(this).width()/2 + pos.left, $(this).height()/2 + pos.top],
+										'size' : [$(this).width(), $(this).height()]
+									};
+									//let elemCenter = [$(this).width()/2 + pos.left, $(this).height()/2 + pos.top]; //[x,y]
+									//let arrayTemp = [elemCenter, $(this).width(), $(this).height()];
+									initChildCoord[$(this).attr('data-getcoord')] = coordObj;
+								}
+							});
+							orderObject(initChildCoord);
+							elemData.divCoord.push(initChildCoord);
+							document.getElementById("element").innerHTML = "";
+						}
+					}
+				}
+			}
+		}
+	}
+
+	function mainElemCoordInput(){
+		for(let i = 0; i < pages.length; i++){
+			let pageContent = pages[i];
+			//alert(JSON.stringify(pageContent));
+			for(let j in pageContent){
+				let elements = pageContent[j];
+				let node = document.getElementById("element");
+				let temp = [];
+				for(let k = 0; k < Object.keys(elements).length; k++){
+					let elemData = elements[Object.keys(elements)[k]].designList[0];
+					node.innerHTML += mainElement[k];	
+					let initChildCoord = {};
+					$('*', '#element').each(function() { 
+						if($(this).attr('data-getcoord') != undefined){
+							//alert($(this).attr('data-getcoord') + ': ' + $(this).width());
+							let pos = $(this).offset();
+							let coordObj = {
+								'center' : [$(this).width()/2 + pos.left, $(this).height()/2 + pos.top],
+								'size' : [$(this).width(), $(this).height()]
+							};
+							//let elemCenter = [$(this).width()/2 + pos.left, $(this).height()/2 + pos.top]; //[x,y]
+							//let arrayTemp = [elemCenter, $(this).width(), $(this).height()];
+							if(temp.includes($(this).attr('data-getcoord')) == false){
+								initChildCoord[$(this).attr('data-getcoord')] = coordObj;
+								temp.push($(this).attr('data-getcoord'));
+							}
+						}
+					});
+					orderObject(initChildCoord);
+					elemData.divCoord.push(initChildCoord);
+					//document.getElementById("element").innerHTML = "";				
+				}
+				console.log(node);
+			}
+		}
+	}
+
+	function orderObject(obj){
+		let arrKey = [], arrKLM = [], arrCoord = [];
+		for(let objKey in obj){
+			let a = objKey.split(" ");	
+			arrKey[a[0]] = a[1];
+			arrKLM[a[0]] = a[2].split(",");
+			arrCoord[a[0]] = obj[objKey];
+			delete obj[objKey];
+		}
+		for(let i = 0; i < arrKey.length; i++){
+			obj[arrKey[i]] = {
+				'KLM' : arrKLM[i],
+				'coord' : arrCoord[i]
+			};
+		}
+	}
+
+	let divide = 10;
+	let pointInterval = screenWidth / divide; //pointInterval: 136.6
+	//alert("pointInterval: " + pointInterval);
+
+	//this algorithm is used to prevent diagonal formation accidentally
+
+	function createPlacement(){ 
+		//alert("len: " + pages.length);
+		for(let i = 0; i < pages.length; i++){
+			let pageContent = pages[i];
+			//alert(JSON.stringify(pageContent));
+			for(let j in pageContent){
+				let elements = pageContent[j];
+				//alert(JSON.stringify(elements));
+				for(let elemData in elements){
+					for(let k in elements[elemData].placementArea){
+						//alert(elements[elemData].placementArea[j]["neighbors"]);
+						let field =  elements[elemData].placementArea[k]["coord"];
+						let arr = [];
+						for(let l in field){
+							let fieldCoord = field[l];		
+							fieldCoord *= pointInterval;
+							arr.push(fieldCoord);
+						}
+						elements[elemData].placementArea[k]["coord"] = arr;
+					}
+				}
+			}
+		}
+	}
+
+	//alert(elements.filters.placementArea);
+
+	function displayCoord(resultData){
+		//alert(JSON.stringify(resultData));
+		let a = resultData["0"];
+		let center = a[0];
+		let center2 = center[0];
+		let center3 = center[1];
+		let new_center = a[1];
+		let placementCoord = [];
+		let htmlData = "<svg height='100000' width='100000'>";
+		for(let i = 0; i < pages.length; i++){
+			elements = pages[i];
+			for(let elemData in elements){
+				//alert(JSON.stringify(elemData));
+				for(let fieldPart in elements[elemData].placementArea){
+					//alert(fieldPart);
+					htmlData += "<polygon points=";
+					let xfg = elements[elemData].placementArea[fieldPart];
+					let x = xfg["coord"];
+					//alert(JSON.stringify(x));
+					htmlData += "\"" + x[0] + "," + x[1] + " " + x[0] + "," + x[3] + " " + x[2] + "," + x[3] + " " + x[2] + "," + x[1] + "\"";
+					htmlData += "style=\"fill:lime;stroke:purple;stroke-width:1\" />";
+				}
+			}
+		}
+		let hi = 389.5;
+		let ok = 132;
+		htmlData += "<circle cx=" + "\"" + hi + "\"" +  "cy=" + "\"" + ok + "\"" +  "r="+ "\"" + 5 + "\"" + " stroke="+ "\"" + "black" + "\"" +" stroke-width="+ "\"" + 3 + "\"" +" fill="+ "\"" + "blue" + "\"" +" />";
+		htmlData += "<circle cx=" + "\"" + center3[0] + "\"" +  "cy=" + "\"" + center3[1] + "\"" +  "r="+ "\"" + 5 + "\"" + " stroke="+ "\"" + "black" + "\"" +" stroke-width="+ "\"" + 3 + "\"" +" fill="+ "\"" + "yellow" + "\"" +" />";
+		htmlData += "<circle cx=" + "\"" + new_center[0] + "\"" +  "cy=" + "\"" + new_center[1] + "\"" +  "r="+ "\"" + 5 + "\"" + " stroke="+ "\"" + "black" + "\"" +" stroke-width="+ "\"" + 3 + "\"" +" fill="+ "\"" + "red" + "\"" +" />";
+		htmlData += "</svg>";
+		//alert(htmlData);
+		console.log(htmlData);
+		document.getElementById("placementDiv").innerHTML = htmlData;
+		$("#placementDiv").html(htmlData);
+	}
+</script>
+
+</body>
+</html>
